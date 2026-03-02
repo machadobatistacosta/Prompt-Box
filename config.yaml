@@ -1,0 +1,183 @@
+# ============================================================================
+# PROMPTBOX CONFIGURATION v3.0
+# ============================================================================
+
+app:
+  name: "PromptBox"
+  version: "3.0.0"
+  debug: false
+  offline_mode: true
+
+# ============================================================================
+# BRAIN SWITCHER - Modelos disponíveis
+# ============================================================================
+models:
+  phi3:
+    name: "phi3"
+    display_name: "⚡ Phi-3 Mini"
+    provider: "ollama"
+    description: "Modelo leve da Microsoft (3.8B) - Rápido"
+    context_length: 4096
+    temperature: 0.0
+    
+  llama3:
+    name: "llama3"
+    display_name: "🦙 Llama 3 8B"
+    provider: "ollama"
+    description: "Modelo da Meta - Balanceado"
+    context_length: 8192
+    temperature: 0.0
+
+# ADICIONEI O QWEN AQUI 👇
+  qwen:
+    name: "qwen2.5:3b"      # Usando 3b (7b estava falhando por memória)
+    display_name: "💎 Qwen 2.5 (Soberano)"
+    provider: "ollama"
+    description: "Raciocínio jurídico e leitura de contexto"
+    context_length: 8192    # Reduzido para 3b
+    temperature: 0.0        # Baixo para ser preciso na lei
+
+  # 🇧🇷 PTBR-SLM - Modelo próprio em Rust
+  ptbr_slm:
+    name: "ptbr-slm"
+    display_name: "🇧🇷 PTBR-SLM 400M (Próprio)"
+    provider: "ptbr-slm"
+    description: "Modelo RWKV treinado do zero em PT-BR (Step 5000)"
+    context_length: 2048
+    temperature: 0.7
+    gguf_path: "../ptbr-slm/target/release/ptbr-slm.exe"
+    tokenizer_path: "../ptbr-slm/data/tokenizer_v16_full/tokenizer.json"
+    model_checkpoint: "../ptbr-slm/checkpoints/checkpoint_5000/model.mpk"
+    model_size: "400m"
+    
+  promptbox_juridico:
+    name: "promptbox-juridico"
+    display_name: "🧠 PromptBox Jurídico"
+    provider: "ollama"
+    description: "Fine-tuned em leis brasileiras"
+    context_length: 8192  # Reduzido para evitar OOM
+    temperature: 0.0
+
+# Modelo ativo
+active_model: "ptbr_slm"
+
+# ============================================================================
+# RAG CONFIGURATION
+# ============================================================================
+rag:
+  chroma_dir: "./chroma_db"
+  collection_name: "promptbox"
+  embedding_model: "all-MiniLM-L6-v2"
+  
+  # IMPORTANTE: Valores otimizados
+  top_k: 5             # Menos documentos = resposta mais rápida
+  distance_threshold: 1.0  # Mais restritivo = menos ruído
+
+# ============================================================================
+# OLLAMA CONFIGURATION
+# ============================================================================
+ollama:
+  api_url: "http://127.0.0.1:11434/api/generate"
+  health_url: "http://127.0.0.1:11434"
+  
+  # TIMEOUT OTIMIZADO
+  # - 300s (5 min) é suficiente para CPU
+  # - 1200s era demais e causava "travamento" na UI
+  timeout: 600
+  health_timeout: 2
+
+# ============================================================================
+# UI CONFIGURATION
+# ============================================================================
+ui:
+  theme: "dark"
+  accent_color: "#7c5cff"
+  show_debug: false
+
+# ============================================================================
+# AGENTS CONFIGURATION
+# ============================================================================
+agents:
+  juridico:
+    keywords:
+      # Gerais
+      - lei
+      - artigo
+      - direito
+      - legal
+      - ilegal
+      - crime
+      - contrato
+      - advogado
+      - juiz
+      - tribunal
+      - processo
+      - sentença
+      - recurso
+      # Trabalhista
+      - clt
+      - trabalhista
+      - demissão
+      - férias
+      - fgts
+      - justa causa
+      - rescisão
+      - aviso prévio
+      - horas extras
+      - salário
+      - empregado
+      # Civil
+      - usucapião
+      - posse
+      - propriedade
+      - herança
+      - inventário
+      - testamento
+      - doação
+      - locação
+      - aluguel
+      - despejo
+      # Família
+      - divórcio
+      - casamento
+      - união estável
+      - pensão
+      - guarda
+      - adoção
+      # Penal
+      - furto
+      - roubo
+      - homicídio
+      - lesão corporal
+      - estelionato
+      - prisão
+      # Consumidor
+      - consumidor
+      - cdc
+      - fornecedor
+      # Digital
+      - lgpd
+      - dados pessoais
+      - marco civil
+      # Constitucional
+      - constituição
+      - constitucional
+    use_rag: true
+    
+  financeiro:
+    keywords:
+      - calcula
+      - valor
+      - quanto
+      - soma
+      - juros
+    use_rag: false
+    
+  tech:
+    keywords:
+      - código
+      - python
+      - javascript
+      - bug
+      - api
+    use_rag: false
