@@ -51,3 +51,9 @@ We are currently in **MVP Validation** phase.
 Follow our journey on [LinkedIn](https://www.linkedin.com/company/prompt-box).
 
 **Founder:** [Caike Costa](https://www.linkedin.com/in/caike-machado-batista-costa/)
+
+---
+
+## 📈 Recent Updates
+- Version 2.0 with professional UI and Brain Switcher.
+- No exposed API keys in the repository. Safe offline architecture confirmed.
